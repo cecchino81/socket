@@ -14,29 +14,46 @@
 
     <h2>Test WebSocket Chat</h2>
     
+    <!-- Campo per il nome utente -->
+    <input type="text" id="username" placeholder="Inserisci il tuo nome" />
+    <button onclick="connectWebSocket()">Connetti</button>
+    
     <div id="messages"></div>
     
     <input type="text" id="messageInput" placeholder="Scrivi un messaggio..." />
     <button onclick="sendMessage()">Invia</button>
 
     <script>
-        let socket = new WebSocket("ws://localhost:8082/ws/chat");
+        let socket;
 
-        socket.onopen = function () {
-            console.log("✅ Connesso al WebSocket!");
-            addMessage("🔹 Connesso al server WebSocket!");
-        };
+        // Funzione per avviare la connessione WebSocket
+        function connectWebSocket() {
+            let username = document.getElementById("username").value;
+            if (username.trim() === "") {
+                alert("Inserisci un nome per connetterti!");
+                return;
+            }
 
-        socket.onmessage = function (event) {
-            console.log("📩 Messaggio ricevuto:", event.data);
-            addMessage("💬 " + event.data);
-        };
+            // Crea una nuova connessione WebSocket con il nome dell'utente
+            socket = new WebSocket("ws://localhost:8082/ws/chat?username=" + encodeURIComponent(username));
 
-        socket.onclose = function () {
-            console.log("❌ Connessione chiusa");
-            addMessage("❌ Connessione chiusa dal server.");
-        };
+            socket.onopen = function () {
+                console.log("✅ Connesso al WebSocket!");
+                addMessage("🔹 Benvenuto, " + username + "!");
+            };
 
+            socket.onmessage = function (event) {
+                console.log("📩 Messaggio ricevuto:", event.data);
+                addMessage("💬 " + event.data);
+            };
+
+            socket.onclose = function () {
+                console.log("❌ Connessione chiusa");
+                addMessage("❌ Connessione chiusa dal server.");
+            };
+        }
+
+        // Funzione per inviare un messaggio
         function sendMessage() {
             let messageInput = document.getElementById("messageInput");
             let message = messageInput.value;
@@ -47,6 +64,7 @@
             }
         }
 
+        // Funzione per aggiungere un messaggio alla UI
         function addMessage(text) {
             let messagesDiv = document.getElementById("messages");
             let messageElement = document.createElement("p");
