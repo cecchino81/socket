@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        #messages { width: 50%; margin: auto; border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
+        input, button { margin-top: 10px; padding: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Test WebSocket Chat</h2>
+    
+    <div id="messages"></div>
+    
+    <input type="text" id="messageInput" placeholder="Scrivi un messaggio..." />
+    <button onclick="sendMessage()">Invia</button>
+
+    <script>
+        let socket = new WebSocket("ws://localhost:8082/ws/chat");
+
+        socket.onopen = function () {
+            console.log("✅ Connesso al WebSocket!");
+            addMessage("🔹 Connesso al server WebSocket!");
+        };
+
+        socket.onmessage = function (event) {
+            console.log("📩 Messaggio ricevuto:", event.data);
+            addMessage("💬 " + event.data);
+        };
+
+        socket.onclose = function () {
+            console.log("❌ Connessione chiusa");
+            addMessage("❌ Connessione chiusa dal server.");
+        };
+
+        function sendMessage() {
+            let messageInput = document.getElementById("messageInput");
+            let message = messageInput.value;
+            if (message.trim() !== "") {
+                socket.send(message);
+                addMessage("📤 Tu: " + message);
+                messageInput.value = "";
+            }
+        }
+
+        function addMessage(text) {
+            let messagesDiv = document.getElementById("messages");
+            let messageElement = document.createElement("p");
+            messageElement.textContent = text;
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>
