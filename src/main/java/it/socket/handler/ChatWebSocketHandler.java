@@ -45,9 +45,16 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        String username = userSessions.remove(session); // Rimuove la sessione dalla mappa
-        sessions.remove(session); // Rimuove la sessione dalla lista
+        String username = userSessions.remove(session); // Rimuovi l'utente dalla mappa
+        sessions.remove(session); // Rimuovi dalla lista di sessioni
         System.out.println("❌ " + username + " ha chiuso la connessione.");
+        
+        // Invia agli altri utenti la notifica della disconnessione
+        for (WebSocketSession s : sessions) {
+            if (s.isOpen()) {
+                s.sendMessage(new TextMessage(username + " si è disconnesso"));
+            }
+        }
     }
 
     @Override
