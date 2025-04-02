@@ -52,7 +52,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         // Invia agli altri utenti la notifica della disconnessione
         for (WebSocketSession s : sessions) {
             if (s.isOpen()) {
-                s.sendMessage(new TextMessage(username + " si è disconnesso"));
+                s.sendMessage(new TextMessage("❌ " + username + " si è disconnesso"));
             }
         }
     }
