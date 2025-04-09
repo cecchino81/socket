@@ -12,13 +12,13 @@ import it.socket.handler.ChatWebSocketHandler;
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(chatWebSocketHandler(), "/ws/chat").setAllowedOrigins("*");
-    }
+	@Override
+	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+		registry.addHandler(chatWebSocketHandler(), "/ws/chat").setAllowedOrigins("*");
+	}
 
-    @Bean
-    public ChatWebSocketHandler chatWebSocketHandler() {
-        return new ChatWebSocketHandler();
-    }
+	@Bean
+	public ChatWebSocketHandler chatWebSocketHandler() {
+		return new ChatWebSocketHandler();
+	}
 }
